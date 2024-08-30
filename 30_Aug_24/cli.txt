@@ -215,4 +215,56 @@ students> db.students.updateOne({ "name": "Alex Johnson" }, { $set: { "age": 25,
   modifiedCount: 0,
   upsertedCount: 0
 }
-students>
+
+C:\Users\urpri>mongosh
+Current Mongosh Log ID: 66d19197f44462e09b2710bb
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.0
+Using MongoDB:          7.0.14
+Using Mongosh:          2.3.0
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2024-08-30T11:06:48.801+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> show dbs
+MySql       8.00 KiB
+admin      40.00 KiB
+blog       72.00 KiB
+config     72.00 KiB
+local      72.00 KiB
+studentDB  40.00 KiB
+students   72.00 KiB
+users      80.00 KiB
+test> use books
+switched to db books
+books> db.books.insertMany([
+...     { "_id": 1, "title": "Moby Dick", "author": "Herman Melville", "year": 1851, "genre": "Fiction" },
+...     { "_id": 2, "title": "Pride and Prejudice", "author": "Jane Austen", "year": 1813, "genre": "Romance" },
+...     { "_id": 3, "title": "1984", "author": "George Orwell", "year": 1949, "genre": "Dystopian" },
+...     { "_id": 4, "title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "year": 1925, "genre": "Fiction" },
+...     { "_id": 5, "title": "To Kill a Mockingbird", "author": "Harper Lee", "year": 1960, "genre": "Fiction" }
+... ])
+{
+  acknowledged: true,
+  insertedIds: { '0': 1, '1': 2, '2': 3, '3': 4, '4': 5 }
+}
+//delete a single document
+books> db.books.deleteOne({ "title": "1984" })
+{ acknowledged: true, deletedCount: 1 }
+
+//delete multiple document
+books> db.books.deleteMany({ "genre": "Fiction" })
+{ acknowledged: true, deletedCount: 3 }
+
+//delete a document and return the deleted document
+books> db.books.findOneAndDelete({ "title": "Pride and Prejudice" })
+{
+  _id: 2,
+  title: 'Pride and Prejudice',
+  author: 'Jane Austen',
+  year: 1813,
+  genre: 'Romance'
+}
