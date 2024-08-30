@@ -1,0 +1,218 @@
+
+C:\Users\urpri>mongosh
+Current Mongosh Log ID: 66d180c3b8bfa573a32710bb
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.0
+Using MongoDB:          7.0.14
+Using Mongosh:          2.3.0
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2024-08-30T11:06:48.801+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> show dbs
+MySql       8.00 KiB
+admin      40.00 KiB
+blog       72.00 KiB
+config     96.00 KiB
+local      72.00 KiB
+studentDB  40.00 KiB
+test> use users
+switched to db users
+users> db.users.insertMany([
+...     { "_id": 1, "name": "Alice", "age": 25, "city": "New York" },
+...     { "_id": 2, "name": "Bob", "age": 30, "city": "Los Angeles" },
+...     { "_id": 3, "name": "Charlie", "age": 35, "city": "New York" }
+... ])
+{ acknowledged: true, insertedIds: { '0': 1, '1': 2, '2': 3 } }
+users> db.users.find({
+...     $and: [
+...         { "city": "New York" },
+...         { "age": { $gt: 30 } }
+...     ]
+... })
+[ { _id: 3, name: 'Charlie', age: 35, city: 'New York' } ]
+users> db.users.find({
+...     "city": { $not: { $eq: "New York" } }
+... })
+[ { _id: 2, name: 'Bob', age: 30, city: 'Los Angeles' } ]
+users> db.users.find({
+...     $or: [
+...         { "city": "New York" },
+...         { "age": { $gt: 30 } }
+...     ]
+... })
+[
+  { _id: 1, name: 'Alice', age: 25, city: 'New York' },
+  { _id: 3, name: 'Charlie', age: 35, city: 'New York' }
+]
+users> db.users.find({
+...     "city": { $not: { $eq: "New York" } }
+... })
+[ { _id: 2, name: 'Bob', age: 30, city: 'Los Angeles' } ]
+users> db.users.find({
+...     $nor: [
+...         { "city": "New York" },
+...         { "age": { $gt: 30 } }
+...     ]
+... })
+[ { _id: 2, name: 'Bob', age: 30, city: 'Los Angeles' } ]
+users> db.products.insertMany([
+...     { "_id": 1, "name": "Laptop", "price": 1200, "discount": 100 },
+...     { "_id": 2, "name": "Smartphone", "price": 800 },
+...     { "_id": 3, "name": "Tablet", "price": 450, "discount": 50 },
+...     { "_id": 4, "name": "Monitor", "price": 300 },
+...     { "_id": 5, "name": "Headphones", "price": 150, "discount": 20 }
+... ])
+{
+  acknowledged: true,
+  insertedIds: { '0': 1, '1': 2, '2': 3, '3': 4, '4': 5 }
+}
+users> db.products.find({
+...     "discount": { $exists: true }
+... })
+[
+  { _id: 1, name: 'Laptop', price: 1200, discount: 100 },
+  { _id: 3, name: 'Tablet', price: 450, discount: 50 },
+  { _id: 5, name: 'Headphones', price: 150, discount: 20 }
+]
+users> db.products.find({
+...     "discount": { $exists: false }
+... })
+[
+  { _id: 2, name: 'Smartphone', price: 800 },
+  { _id: 4, name: 'Monitor', price: 300 }
+]
+users> db.products.find({ "discount": { $exists: true } }) // Finds products with a discount
+[
+  { _id: 1, name: 'Laptop', price: 1200, discount: 100 },
+  { _id: 3, name: 'Tablet', price: 450, discount: 50 },
+  { _id: 5, name: 'Headphones', price: 150, discount: 20 }
+]
+users> db.products.find({ "discount": { $exists: false } }) // Finds products without a discount
+[
+  { _id: 2, name: 'Smartphone', price: 800 },
+  { _id: 4, name: 'Monitor', price: 300 }
+]
+users> use students
+switched to db students
+students> db.students.insertMany([
+...     { "_id": 1, "name": "John Doe", "age": 21, "major": "Computer Science", "gpa": 3.5 },
+...     { "_id": 2, "name": "Jane Smith", "age": 22, "major": "Mathematics", "gpa": 3.8 },
+...     { "_id": 3, "name": "Sam Brown", "age": 20, "major": "Physics", "gpa": 3.2 },
+...     { "_id": 4, "name": "Lisa Wong", "age": 23, "major": "Chemistry", "gpa": 3.7 }
+... ])
+{ acknowledged: true, insertedIds: { '0': 1, '1': 2, '2': 3, '3': 4 } }
+students> db.students.updateOne(
+...     { "name": "John Doe" },  // Filter: Find the document where the name is "John Doe"
+...     { $set: { "gpa": 3.9 } }  // Update: Set the GPA to 3.9
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+students> db.students.updateMany(
+...     { "major": "Physics" },     // Filter: Find all documents where the major is "Physics"
+...     { $inc: { "gpa": 0.1 } }     // Update: Increment the GPA by 0.1
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+students> db.students.replaceOne(
+...     { "_id": 2 },  // Filter: Find the document with _id 2
+...     { "_id": 2, "name": "Jane Smith", "age": 22, "major": "Mathematics", "gpa": 4.0 }  // New document
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+students> db.students.updateOne(
+...     { "name": "Alex Johnson" },  // Filter: Search for a document with the name "Alex Johnson"
+...     { $set: { "age": 25, "major": "Biology", "gpa": 3.4 } },  // Update or insert this data
+...     { upsert: true }  // If the document doesn't exist, create it
+... )
+{
+  acknowledged: true,
+  insertedId: ObjectId('66d18f5553bed777d52a898a'),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+students> db.students.updateOne({ "name": "John Doe" }, { $set: { "gpa": 3.9 } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+students> db.students.updateMany({ "major": "Physics" }, { $inc: { "gpa": 0.1 } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+students> db.students.replaceOne({ "_id": 2 }, { "_id": 2, "name": "Jane Smith", "age": 22, "major": "Mathematics", "gpa": 4.0 })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+students> db.students.updateOne({ "name": "Alex Johnson" }, { $set: { "age": 25, "major": "Biology", "gpa": 3.4 } }, { upsert: true })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+students> db.students.updateOne({ "name": "John Doe" }, { $set: { "gpa": 3.9 } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+students> db.students.updateMany({ "major": "Physics" }, { $inc: { "gpa": 0.1 } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+students> db.students.replaceOne({ "_id": 2 }, { "_id": 2, "name": "Jane Smith", "age": 22, "major": "Mathematics", "gpa": 4.0 })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+students> db.students.updateOne({ "name": "Alex Johnson" }, { $set: { "age": 25, "major": "Biology", "gpa": 3.4 } }, { upsert: true }
+)
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+students>
