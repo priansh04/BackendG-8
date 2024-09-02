@@ -36,5 +36,5 @@ TASK 2: Update the student of all students in the students collection to Datasci
  db.collection.updateMany(
      { "marks": { $gt: 95 } }, // Query to match documents where marks are greater than 95
      { $set: { "grade": "A++" } } // Update operation to set the grade to "A++"
-   );
+    );
   
